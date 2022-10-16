@@ -1,6 +1,6 @@
 package data;
 
-import entitties.User;
+import entitties.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
@@ -13,6 +13,11 @@ public class HibernateUtil {
         try {
             Configuration configuration = new Configuration();
             configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(Credential.class);
+            configuration.addAnnotatedClass(Account.class);
+            configuration.addAnnotatedClass(Transaction.class);
+            configuration.addAnnotatedClass(Budget.class);
+            configuration.addAnnotatedClass(Bank.class);
 //            configuration.configure();
             return configuration
                     .buildSessionFactory(new StandardServiceRegistryBuilder()
@@ -24,6 +29,7 @@ public class HibernateUtil {
                     "There was an error building the factory");
         }
     }
+
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;

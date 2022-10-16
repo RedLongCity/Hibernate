@@ -1,19 +1,17 @@
 package entitties;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.*;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(exclude = {"accounts"})
 @Table(name = "FINANCES_USER")
 public class User {
 
@@ -21,6 +19,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USER_ID")
     private Long userId;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
+    private Set<Account> accounts = new HashSet<>();
 
     @Column(name = "FIRST_NAME")
     private String firstName;
@@ -49,4 +50,27 @@ public class User {
     @Formula("lower(datediff(curdate(), birth_date)/365)")
     private int age;
 
+    @ElementCollection
+    @CollectionTable(name = "USER_ADDRESS", joinColumns = @JoinColumn(name = "USER_ID"))
+    private Collection<Address> addresses = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    private Credential credential;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthDate=" + birthDate +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", lastUpdatedDate=" + lastUpdatedDate +
+                ", lastUpdatedBy='" + lastUpdatedBy + '\'' +
+                ", createdDate=" + createdDate +
+                ", createdBy='" + createdBy + '\'' +
+                ", age=" + age +
+                ", addresses=" + addresses +
+                '}';
+    }
 }
