@@ -16,7 +16,7 @@
 //import com.infiniteskills.data.entities.User;
 //import com.infiniteskills.data.entities.UserCredentialView;
 //
-//public class Application {
+//public class Application2 {
 //
 //    public static void main(String[] args) {
 //        SessionFactory sessionFactory = null;

@@ -12,16 +12,10 @@ public class HibernateUtil {
     private static SessionFactory buildSessionFactory() {
         try {
             Configuration configuration = new Configuration();
-            configuration.addAnnotatedClass(User.class);
-            configuration.addAnnotatedClass(Credential.class);
-            configuration.addAnnotatedClass(Account.class);
-            configuration.addAnnotatedClass(Transaction.class);
-            configuration.addAnnotatedClass(Budget.class);
-            configuration.addAnnotatedClass(Bank.class);
-//            configuration.configure();
+            configuration.configure();
             return configuration
                     .buildSessionFactory(new StandardServiceRegistryBuilder()
-//                            .applySettings(configuration.getProperties())
+                            .applySettings(configuration.getProperties())
                             .build());
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,7 +23,6 @@ public class HibernateUtil {
                     "There was an error building the factory");
         }
     }
-
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
