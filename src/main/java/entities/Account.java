@@ -1,4 +1,4 @@
-package entitties;
+package entities;
 
 import lombok.*;
 
@@ -19,6 +19,10 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ACCOUNT_ID")
     private Long accountId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ACCOUNT_TYPE")
+    private AccountType accountType;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)

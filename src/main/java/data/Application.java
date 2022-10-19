@@ -1,6 +1,6 @@
 package data;
 
-import entitties.*;
+import entities.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;

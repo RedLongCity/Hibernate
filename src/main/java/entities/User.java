@@ -1,4 +1,4 @@
-package entitties;
+package entities;
 
 import lombok.*;
 import org.hibernate.annotations.Formula;

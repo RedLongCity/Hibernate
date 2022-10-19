@@ -2,14 +2,14 @@ package data;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import entitties.*;
+import entities.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Application2 {
+public class ApplicationHibernate {
 
     //    public static void main(String[] args) {
     public static void main_(String[] args) {
@@ -105,7 +105,8 @@ public class Application2 {
         }
     }
 
-    public static void main(String[] args) {
+//    public static void main(String[] args) {
+    public static void main__(String[] args) {
         SessionFactory sessionFactory;
         Session session = null;
         org.hibernate.Transaction tx = null;
@@ -189,4 +190,208 @@ public class Application2 {
 
     }
 
+//    public static void main(String[] arg) {
+    public static void main_Compoud_Keys(String[] arg) {
+        SessionFactory sessionFactory = null;
+        Session session = null;
+        Session session2 = null;
+        org.hibernate.Transaction tx = null;
+        org.hibernate.Transaction tx2 = null;
+
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Currency currency = new Currency();
+            currency.setCountryName("United States");
+            currency.setName("Dollar");
+            currency.setSymbol("$");
+
+            session.persist(currency);
+            tx.commit();
+
+            session2 = sessionFactory.openSession();
+            tx2 = session2.beginTransaction();
+
+            Currency dbCurrency = (Currency) session2.get(Currency.class,
+                    new CurrencyId("Dollar", "United States"));
+            System.out.println(dbCurrency.getName());
+
+            tx2.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            if (tx2 != null) {
+                tx2.rollback();
+            }
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+
+//    public static void main(String[] arg) {
+    public static void main_CompoudKey(String[] arg) {
+        SessionFactory sessionFactory = null;
+        Session session = null;
+        org.hibernate.Transaction tx = null;
+        org.hibernate.Transaction tx2 = null;
+
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Currency currency = new Currency();
+            currency.setCountryName("United States");
+            currency.setName("Dollar");
+            currency.setSymbol("$");
+
+            Market market = Market.builder()
+                    .marketName("Varus")
+                    .currency(currency)
+                    .build();
+
+            session.persist(market);
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            if (tx2 != null) {
+                tx2.rollback();
+            }
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+
+    public static void main_Compoud_Keys_Join_Table(String[] arg) {
+        SessionFactory sessionFactory = null;
+        Session session = null;
+        org.hibernate.Transaction tx = null;
+        org.hibernate.Transaction tx2 = null;
+
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Account account = Account.builder()
+                    .name("Vladimir")
+                    .initialBalance(new BigDecimal("1.01"))
+                    .currentBalance(new BigDecimal("100000000"))
+                    .openDate(new Date())
+                    .closeDate(new Date())
+                    .lastUpdatedDate(new Date())
+                    .accountType(AccountType.LOAN)
+                    .build();
+
+            session.persist(account);
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            if (tx2 != null) {
+                tx2.rollback();
+            }
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+
+    public static void main_Bond_Stock(String[] arg) {
+        SessionFactory sessionFactory = null;
+        Session session = null;
+        org.hibernate.Transaction tx = null;
+        org.hibernate.Transaction tx2 = null;
+
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Stock stock = new Stock("name_", "issuer_", new Date(),
+                    new BigDecimal("1.01"), new BigDecimal("2.02"));
+            Bond bond = new Bond("name_", "issuer_", new Date(),
+                    new BigDecimal("1.01"), new BigDecimal("2.02"), new Date());
+
+            session.persist(stock);
+            session.persist(bond);
+
+            Stock stockDb = (Stock) session.get(Stock.class, 1L);
+            Bond bondDb = (Bond) session.get(Bond.class, 1L);
+
+//            System.out.println(stockDb.getStockId());
+//            System.out.println(bondDb.getBondId());
+
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            if (tx2 != null) {
+                tx2.rollback();
+            }
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
+
+    public static void main(String[] arg) {
+        SessionFactory sessionFactory = null;
+        Session session = null;
+        org.hibernate.Transaction tx = null;
+        org.hibernate.Transaction tx2 = null;
+
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Portfolio portfolio = Portfolio.builder()
+                    .name("name_")
+                    .build();
+
+            Stock stock = new Stock("name_", "issuer_", new Date(),
+                    new BigDecimal("1.01"), new BigDecimal("2.02"));
+            Bond bond = new Bond("name_", "issuer_", new Date(),
+                    new BigDecimal("1.01"), new BigDecimal("2.02"), new Date());
+
+            portfolio.setInvestements(Lists.newArrayList(stock, bond));
+            stock.setPortfolio(portfolio);
+            bond.setPortfolio(portfolio);
+
+            session.persist(portfolio);
+            session.persist(stock);
+            session.persist(bond);
+
+            tx.commit();
+
+
+            session = sessionFactory.openSession();
+            tx = session.beginTransaction();
+
+            Stock stockDb = (Stock) session.get(Stock.class, 1L);
+            System.out.println("STOCK_DB QNT: " + stockDb.getQuantity());
+
+            tx.commit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            tx.rollback();
+            if (tx2 != null) {
+                tx2.rollback();
+            }
+        } finally {
+            session.close();
+            sessionFactory.close();
+        }
+    }
 }
